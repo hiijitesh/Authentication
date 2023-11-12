@@ -1,7 +1,8 @@
 // register
-const UserModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
+const UserModel = require("../models/userModel");
 const validator = require("../utils/validator");
 
 const controller = {
@@ -56,8 +57,84 @@ const controller = {
             });
         }
     },
+
+    login: async (req, res) => {
+        try {
+            const { phone, password } = req.body;
+
+            if (!phone || !password) {
+                return res.json({
+                    message: "all fields are required",
+                });
+            }
+
+            const user = await UserModel.findOne({ phone }).select("password");
+            console.log(user);
+
+            if (!user) {
+                return res.status(401).json({
+                    message: "user doesn't exists, pls signup",
+                });
+            }
+
+            const matchPassword = await bcrypt.compare(password, user.password);
+
+            if (!matchPassword) {
+                return res.status(401).json({
+                    message: "wrong password",
+                });
+            }
+
+            const accessToken = await generateJWTToken(user, "access");
+            const refreshToken = await generateJWTToken(user, "refresh");
+
+            res.status(200).json({
+                accessToken,
+                refreshToken,
+                message: "Login successfully",
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(401).json({
+                success: false,
+                message: "something went wrong",
+            });
+        }
+    },
+
+    getUsers: async (req, res) => {
+        try {
+            const { phone } = req.body;
+
+            const authUser = req.test;
+            console.log("==authUser===", authUser);
+
+            const user = await UserModel.findOne({ phone });
+            res.status(200).json({
+                message: "Login successfully",
+                user,
+            });
+        } catch (error) {
+            console.log(error);
+            res.status(401).json({
+                success: false,
+                message: "something went wrong",
+            });
+        }
+    },
 };
 
-// login
+function generateJWTToken(user, token_type) {
+    let token;
+
+    if (token_type === "access") {
+        token = jwt.sign(process.env.ACCESS_TOKEN, {
+            expiresIn: "30m",
+        });
+    } else {
+        token = jwt.sign({ phone: user.phone }, process.env.REFRESH_TOKEN);
+    }
+    return token;
+}
 
 module.exports = controller;

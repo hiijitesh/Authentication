@@ -1,24 +1,21 @@
 require("dotenv").config();
-
 const jwt = require("jsonwebtoken");
 
 function verifyToken(token) {
     let decoded = {};
-
-    jwt.verify(token, process.env.ACCESS_TOKEN, (err, paramdecoded) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN, (err, paramDecoded) => {
         if (err) {
             return;
         }
-        decoded = paramdecoded;
+        decoded = paramDecoded;
     });
     return decoded;
 }
 
 function isAuthenticated(req, res, next) {
     const authorizationToken = req.headers.authorization;
-
     let token;
-    console.log("TOKEN========", authorizationToken);
+    // console.log("TOKEN========", authorizationToken);
 
     if (authorizationToken) {
         token = authorizationToken.split(" ")[1];

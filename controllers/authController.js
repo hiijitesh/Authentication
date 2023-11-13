@@ -121,10 +121,10 @@ const controller = {
     },
 };
 
-function generateJWTToken(user, token_type) {
+function generateJWTToken(user, tokenType) {
     let token;
 
-    if (token_type === "access") {
+    if (tokenType === "access") {
         token = jwt.sign(process.env.ACCESS_TOKEN, {
             expiresIn: "30m",
         });

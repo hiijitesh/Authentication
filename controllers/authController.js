@@ -16,10 +16,7 @@ const controller = {
                 });
             }
 
-            if (
-                !validator.validateEmail(email) ||
-                !validator.validatePhoneNumber(phone)
-            ) {
+            if (!validator.Email(email) || !validator.PhoneNumber(phone)) {
                 return res.json({
                     message: "phone or email is not valid",
                 });

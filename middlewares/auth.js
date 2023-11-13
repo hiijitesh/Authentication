@@ -2,10 +2,10 @@ require("dotenv").config();
 
 const jwt = require("jsonwebtoken");
 
-function verifyToken(jwt_token) {
+function verifyToken(token) {
     let decoded = {};
 
-    jwt.verify(jwt_token, process.env.ACCESS_TOKEN, (err, paramdecoded) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN, (err, paramdecoded) => {
         if (err) {
             return;
         }
@@ -39,7 +39,7 @@ function isAuthenticated(req, res, next) {
         });
     }
 
-    req.test = decoded;
+    req.user = decoded;
     next();
 }
 

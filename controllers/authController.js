@@ -22,6 +22,12 @@ const controller = {
                 });
             }
 
+            if (!validator.Password(password)) {
+                return res.json({
+                    message: "Minimum length of password should be 8",
+                });
+            }
+
             const existingUser = await UserModel.findOne({
                 email,
                 phone,
